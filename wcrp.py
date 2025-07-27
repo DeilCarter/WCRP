@@ -11,21 +11,16 @@ HEADERS = {
     "Accept": "*/*"
 }
 
-@bot.event
-async def on_ready():
-    print(f"✅ Bot started as {bot.user}")
-    await check_server_status()
-    check_server_status.start()
-
 @tasks.loop(minutes=1)
 async def check_server_status():
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(API_URL, headers=HEADERS) as response:
                 data = await response.json()
-                is_online = data.get("online", False)
+                # Проверяем статус сервера
+                server_status = data.get("server", {}).get("status", "").lower()
 
-                if is_online:
+                if server_status == "online":
                     await bot.change_presence(status=disnake.Status.online,
                                               activity=disnake.Game("Server Online"))
                 else:
@@ -43,5 +38,12 @@ from commands.moderation import ModerationCommands
 bot.add_cog(ModerationCommands(bot))
 bot.add_cog(SessionCommands(bot))
 bot.add_cog(AdditionalCommands(bot))
+
+@bot.event
+async def on_ready():
+    print(f"✅ Bot started as {bot.user}")
+    await check_server_status()
+    check_server_status.start()
+
 
 bot.run(TOKEN)
