@@ -2,6 +2,10 @@ import disnake
 from disnake.ext import commands, tasks
 import aiohttp
 import asyncio
+import threading
+import os
+import socket
+import time
 from config import TOKEN, API_KEY, API_URL, HEADERS
 
 intents = disnake.Intents.all()
@@ -27,6 +31,22 @@ async def check_server_status():
             await bot.change_presence(status=disnake.Status.do_not_disturb,
                                       activity=disnake.Game("Server Offline"))
 
+def fake_web_server():
+    port = int(os.environ.get("PORT", 10000))
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("0.0.0.0", port))
+    sock.listen(1)
+    while True:
+        time.sleep(100)
+
+# Запуск фейкового сервера в фоне
+threading.Thread(target=fake_web_server, daemon=True).start()
+
+# --- Настройка Discord-бота ---
+intents = disnake.Intents.all()
+bot = commands.Bot(command_prefix="/", intents=intents)
+
+
 from commands.session import SessionCommands
 from commands.additional import AdditionalCommands
 from commands.moderation import ModerationCommands
@@ -45,3 +65,5 @@ async def on_ready():
     start_banned_vehicle_task(bot)
 
 bot.run(TOKEN)
+bot.run(os.getenv(TOKEN))
+
