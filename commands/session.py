@@ -2,6 +2,7 @@ import disnake
 from disnake.ext import commands
 import time
 import json
+import asyncio
 from config import STARTUP_CHANNEL_ID, SHUTDOWN_CHANNEL_ID, STARTUP_REACTION_COUNT
 
 startup_message_id = None
@@ -58,22 +59,21 @@ class SessionCommands(commands.Cog):
 
     @commands.slash_command(description="Session startup")
     async def session_startup(self, inter: disnake.ApplicationCommandInteraction):
-        await inter.response.defer(ephemeral=True)  
-        global startup_message_id, session_start_time, current_embed_message_id
-
-        session_start_time = int(time.time())
         await inter.response.defer(ephemeral=True)
+
+        global startup_message_id, session_start_time, current_embed_message_id
+        session_start_time = int(time.time())
 
         embeds = load_embeds_from_json("sessionsjson/startup.json")
         views = load_views_from_json("sessionsjson/startup.json")
 
         if not embeds:
-            await inter.followup.send("\u200b", ephemeral=True)
+            await inter.followup.send("❌ Не удалось загрузить embed.", ephemeral=True)
             return
 
         channel = self.bot.get_channel(STARTUP_CHANNEL_ID)
         if not channel:
-            await inter.followup.send("\u200b", ephemeral=True)
+            await inter.followup.send("❌ Не найден канал запуска.", ephemeral=True)
             return
 
         message = await channel.send(embed=embeds[0], view=views[0] if views else None)
@@ -83,13 +83,17 @@ class SessionCommands(commands.Cog):
         for embed in embeds[1:]:
             await channel.send(embed=embed)
 
-        await inter.followup.send("Session started!", ephemeral=True)
+        await inter.followup.send("✅ Сессия начата. Ожидаем реакции.", ephemeral=True)
 
-        # Ждём реакции ✅
         async def wait_for_reactions():
-            global startup_message_id
-            while True:
-                msg = await channel.fetch_message(startup_message_id)
+            global startup_message_id, current_embed_message_id
+
+            while startup_message_id:
+                try:
+                    msg = await channel.fetch_message(startup_message_id)
+                except disnake.NotFound:
+                    return
+
                 for reaction in msg.reactions:
                     if str(reaction.emoji) == "✅":
                         users = [user async for user in reaction.users() if not user.bot]
@@ -106,10 +110,10 @@ class SessionCommands(commands.Cog):
                                 sent = await channel.send(embed=current_embeds[0])
                                 current_embed_message_id = sent.id
                             return
-                await disnake.utils.sleep_until(time.time() + 1)
+
+                await asyncio.sleep(1)
 
         self.bot.loop.create_task(wait_for_reactions())
-        await inter.followup.send("✅ Готово", ephemeral=True)
 
     @commands.slash_command(description="Session Shutdown")
     async def session_shutdown(self, inter: disnake.ApplicationCommandInteraction):
@@ -125,16 +129,13 @@ class SessionCommands(commands.Cog):
 
         shutdown_embeds = load_embeds_from_json("json/shutdown.json")
         if not shutdown_embeds:
-            await inter.channel.send("")
+            await inter.followup.send("❌ Не удалось загрузить shutdown embed.", ephemeral=True)
             return
 
         startup_channel = self.bot.get_channel(STARTUP_CHANNEL_ID)
         if startup_channel:
             for embed in shutdown_embeds:
                 await startup_channel.send(embed=embed)
-        else:
-            await inter.channel.send("")
 
         current_embed_message_id = None
-        await inter.followup.send("Session is ended.", ephemeral=True)
-    
+        await inter.followup.send("🟥 Сессия завершена.", ephemeral=True)
