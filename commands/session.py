@@ -108,7 +108,7 @@ class SessionCommands(commands.Cog):
                             startup_message_id = None
 
                             timestamp_str = f"<t:{session_start_time}:R>"
-                            current_embeds = load_embeds_from_json("sessionsjson/current.json", {
+                            current_embeds = load_embeds_from_json("json/current.json", {
                                 "{SERVERE_STARTUP_TIME}": timestamp_str
                             })
 
