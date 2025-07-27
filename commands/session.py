@@ -63,15 +63,15 @@ class SessionCommands(commands.Cog):
             await inter.response.defer(ephemeral=True)
             print("[DEBUG] Defer успешно вызван")
         except Exception as e:
-            print(f"[ERROR] Ошибка при defer: {e}")
+            print(f"[ERROR] Ошибка при defer: {type(e).__name__} - {e}")
             return
 
         
         global startup_message_id, session_start_time, current_embed_message_id
         session_start_time = int(time.time())
 
-        embeds = load_embeds_from_json("sessionsjson/startup.json")
-        views = load_views_from_json("sessionsjson/startup.json")
+        embeds = load_embeds_from_json("json/startup.json")
+        views = load_views_from_json("json/startup.json")
 
         if not embeds:
             await inter.followup.send("❌ Не удалось загрузить embed.", ephemeral=True)
