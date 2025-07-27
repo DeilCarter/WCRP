@@ -12,5 +12,4 @@ multidict==6.6.3
 propcache==0.3.2
 requests==2.32.4
 typing_extensions==4.14.1
-urllib==32.5.0
 yarl==1.20.1
