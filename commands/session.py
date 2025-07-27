@@ -59,8 +59,14 @@ class SessionCommands(commands.Cog):
 
     @commands.slash_command(description="Session startup")
     async def session_startup(self, inter: disnake.ApplicationCommandInteraction):
-        await inter.response.defer(ephemeral=True)
+        try:
+           await inter.response.defer(ephemeral=True)
+            print("[DEBUG] Defer успешно вызван")
+        except Exception as e:
+            print(f"[ERROR] Ошибка при defer: {e}")
+            return
 
+        
         global startup_message_id, session_start_time, current_embed_message_id
         session_start_time = int(time.time())
 
