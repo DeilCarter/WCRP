@@ -1,0 +1,10 @@
+{
+  "embeds": [
+    {
+      "description": "### Banned vehicle has been spawned.\n**Information:**\nVehicle: {vehicle_name}\nOwner: {owner_name}",
+      "image": {
+        "url": "https://media.discordapp.net/attachments/1395818529382596659/1398971296800575603/23.png?ex=68874d0c&is=6885fb8c&hm=bbc8fec4db51b980ca5e5f71655487cd644523af4385811a18b4f60519dee8ef&=&format=webp&quality=lossless&width=1250&height=42"
+      }
+    }
+  ]
+}
