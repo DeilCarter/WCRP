@@ -3,7 +3,7 @@ from disnake.ext import commands
 import time
 import json
 import asyncio
-from config import STARTUP_CHANNEL_ID, SHUTDOWN_CHANNEL_ID, STARTUP_REACTION_COUNT
+from config import STARTUP_CHANNEL_ID, SHUTDOWN_CHANNEL_ID, STARTUP_REACTION_COUNT, SHR_ROLE_ID
 
 startup_message_id = None
 current_embed_message_id = None
@@ -59,6 +59,12 @@ class SessionCommands(commands.Cog):
 
     @commands.slash_command(description="Session startup")
     async def session_startup(self, inter: disnake.ApplicationCommandInteraction):
+        member = inter.author
+        member_role_ids = {role.id for role in member.roles}
+        if SHR_ROLE_ID not in member_role_ids:
+            await inter.response.send_message("❌ У вас нет прав для запуска сессии.", ephemeral=True)
+            return
+
         try:
             await inter.response.defer(ephemeral=True)
             print("[DEBUG] Defer успешно вызван")
@@ -66,7 +72,6 @@ class SessionCommands(commands.Cog):
             print(f"[ERROR] Ошибка при defer: {type(e).__name__} - {e}")
             return
 
-        
         global startup_message_id, session_start_time, current_embed_message_id
         session_start_time = int(time.time())
 
@@ -145,3 +150,6 @@ class SessionCommands(commands.Cog):
 
         current_embed_message_id = None
         await inter.followup.send("🟥 Сессия завершена.", ephemeral=True)
+
+def setup(bot):
+    bot.add_cog(SessionCommands(bot))

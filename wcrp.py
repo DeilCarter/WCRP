@@ -6,11 +6,26 @@ import threading
 import os
 import socket
 import time
-from config import TOKEN, API_KEY, API_URL, HEADERS
 
+from config import TOKEN, API_URL, HEADERS
+
+# --- Функция fake_web_server для "фейкового" сервера ---
+def fake_web_server():
+    port = int(os.environ.get("PORT", 10000))
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("0.0.0.0", port))
+    sock.listen(1)
+    while True:
+        time.sleep(100)
+
+# Запуск fake_web_server в отдельном потоке
+threading.Thread(target=fake_web_server, daemon=True).start()
+
+# --- Создаем бота ---
 intents = disnake.Intents.all()
-bot = commands.InteractionBot(intents=intents)
+bot = commands.InteractionBot(intents=intents)  # Используем InteractionBot (для slash-команд)
 
+# --- Задача для проверки статуса сервера ---
 @tasks.loop(minutes=1)
 async def check_server_status():
     async with aiohttp.ClientSession() as session:
@@ -31,31 +46,20 @@ async def check_server_status():
             await bot.change_presence(status=disnake.Status.do_not_disturb,
                                       activity=disnake.Game("Server Offline"))
 
-def fake_web_server():
-    port = int(os.environ.get("PORT", 10000))
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(("0.0.0.0", port))
-    sock.listen(1)
-    while True:
-        time.sleep(100)
+extensions = [
+    "commands.session",
+    "commands.additional",
+    "commands.gameintegration", 
+]
 
-# Запуск фейкового сервера в фоне
-threading.Thread(target=fake_web_server, daemon=True).start()
-
-# --- Настройка Discord-бота ---
-intents = disnake.Intents.all()
-bot = commands.Bot(command_prefix="/", intents=intents)
-
-
-from commands.session import SessionCommands
-from commands.additional import AdditionalCommands
-from commands.moderation import ModerationCommands
+for ext in extensions:
+    try:
+        bot.load_extension(ext)
+        print(f"Loaded cog: {ext.split('.')[-1]}")
+    except Exception as e:
+        print(f"Failed to load cog {ext.split('.')[-1]}: {e}")
 
 from events.banned_vehicle_monitor import start_banned_vehicle_task
-
-bot.add_cog(ModerationCommands(bot))
-bot.add_cog(SessionCommands(bot))
-bot.add_cog(AdditionalCommands(bot))
 
 @bot.event
 async def on_ready():
@@ -64,6 +68,5 @@ async def on_ready():
     check_server_status.start()
     start_banned_vehicle_task(bot)
 
+# --- Запуск бота ---
 bot.run(TOKEN)
-bot.run(os.getenv(TOKEN))
-
