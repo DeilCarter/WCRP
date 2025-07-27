@@ -3,7 +3,7 @@ TOKEN = "MTM5ODk2MDUxNjA4ODU5ODYxOQ.GSJ1aE.OYspbisT6pQ6EnGL45SNnoQPTDJFHrm-u_P_5
 PREFIX = ">"
 
 # ERLC SERVER
-API_URL = "https://api.policeroleplay.community/v1/serverinfo"
+API_URL = "https://api.policeroleplay.community/v1/server"
 API_KEY = "SabvPXdoQYgEaCSyxlOD-yNpevWPmlwygYRMlnobiDWNEIvGYqBFDSPihlHGe"
 
 # CMDS
