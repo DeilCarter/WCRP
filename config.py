@@ -1,6 +1,6 @@
 # BOT
 TOKEN = "MTM5ODk2MDUxNjA4ODU5ODYxOQ.GSJ1aE.OYspbisT6pQ6EnGL45SNnoQPTDJFHrm-u_P_5c"
-PASSWORD = "9.5VXEG4wbj2s7g"
+PREFIX = ">"
 
 # ERLC SERVER
 API_URL = "https://api.policeroleplay.community/v1/serverinfo"
