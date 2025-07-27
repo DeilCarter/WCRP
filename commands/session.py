@@ -67,12 +67,12 @@ class SessionCommands(commands.Cog):
         views = load_views_from_json("sessionsjson/startup.json")
 
         if not embeds:
-            await inter.followup.send("", ephemeral=True)
+            await inter.followup.send("\u200b", ephemeral=True)
             return
 
         channel = self.bot.get_channel(STARTUP_CHANNEL_ID)
         if not channel:
-            await inter.followup.send("", ephemeral=True)
+            await inter.followup.send("\u200b", ephemeral=True)
             return
 
         message = await channel.send(embed=embeds[0], view=views[0] if views else None)
