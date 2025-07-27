@@ -58,6 +58,7 @@ class SessionCommands(commands.Cog):
 
     @commands.slash_command(description="Session startup")
     async def session_startup(self, inter: disnake.ApplicationCommandInteraction):
+        await inter.response.defer(ephemeral=True)  
         global startup_message_id, session_start_time, current_embed_message_id
 
         session_start_time = int(time.time())
@@ -135,3 +136,5 @@ class SessionCommands(commands.Cog):
 
         current_embed_message_id = None
         await inter.followup.send("Session is ended.", ephemeral=True)
+        
+    await inter.followup.send("✅ Готово", ephemeral=True)
