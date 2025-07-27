@@ -109,6 +109,7 @@ class SessionCommands(commands.Cog):
                 await disnake.utils.sleep_until(time.time() + 1)
 
         self.bot.loop.create_task(wait_for_reactions())
+        await inter.followup.send("✅ Готово", ephemeral=True)
 
     @commands.slash_command(description="Session Shutdown")
     async def session_shutdown(self, inter: disnake.ApplicationCommandInteraction):
@@ -136,5 +137,4 @@ class SessionCommands(commands.Cog):
 
         current_embed_message_id = None
         await inter.followup.send("Session is ended.", ephemeral=True)
-        
-    await inter.followup.send("✅ Готово", ephemeral=True)
+    
