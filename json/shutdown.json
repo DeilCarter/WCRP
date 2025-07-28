@@ -1,9 +1,12 @@
 {
   "embeds": [
     {
-      "title": "📡 закрытие сессия",
-      "description": "Сессия закрыта",
-      "color": 5814783
+      "title": "📡 Session Shut Down",
+      "description": "Please leave the server. We hope you enjoyed gameplay!",
+      "color": 5814783,
+      "image": {
+        "url": "https://media.discordapp.net/attachments/1395818529382596659/1398971296800575603/23.png"
+      }
     }  
   ]
 }

@@ -112,7 +112,10 @@ class SessionCommands(commands.Cog):
                             await msg.delete()
                             startup_message_id = None
 
-                            timestamp_str = f"<t:{session_start_time}:R>"
+                            # Здесь время достижения нужного количества галочек
+                            reached_time = int(time.time())
+                            timestamp_str = f"<t:{reached_time}:R>"
+
                             current_embeds = load_embeds_from_json("json/current.json", {
                                 "{SERVERE_STARTUP_TIME}": timestamp_str
                             })
