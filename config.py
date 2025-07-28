@@ -1,10 +1,10 @@
 # DISCORD BOT
-TOKEN = "MTM5ODk2MDUxNjA4ODU5ODYxOQ.GSJ1aE.OYspbisT6pQ6EnGL45SNnoQPTDJFHrm-u_P_5c"
+TOKEN = "MTM5ODk2MDUxNjA4ODU5ODYxOQ.GSJ1aE.***********************************-u_P_5c"
 PREFIX = ">"
 
 # ERLC SERVER
 API_URL = "https://api.policeroleplay.community/v1/server"
-API_KEY = "SabvPXdoQYgEaCSyxlOD-yNpevWPmlwygYRMlnobiDWNEIvGYqBFDSPihlHGe"
+API_KEY = "SabvPXdoQYgEaCSyxlOD-***************IvGYqBFDSPihlHGe"
 
 HEADERS = {
     "server-key": API_KEY,
